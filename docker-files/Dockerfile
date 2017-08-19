@@ -16,6 +16,12 @@
 ###############################################################################
 # Docker image for Core Command micro service 
 # FROM java:8
+FROM maven:3.3-jdk-8-alpine
+
+COPY docker-files/pom.xml .
+
+RUN mvn dependency:copy -q
+
 FROM alpine:3.4
 MAINTAINER Jim White <james_white2@dell.com>
 
@@ -27,8 +33,9 @@ ENV APP=core-command.jar
 ENV APP_PORT=48082
 
 #copy JAR and property files to the image
-COPY *.jar $APP_DIR/$APP
-COPY *.properties $APP_DIR/
+COPY --from=0 *.jar $APP_DIR/$APP
+#COPY *.jar $APP_DIR/$APP
+COPY docker-files/*.properties $APP_DIR/
 
 #expose core data port
 EXPOSE $APP_PORT
