@@ -22,7 +22,7 @@ COPY docker-files/pom.xml .
 
 RUN mvn dependency:copy -q
 
-FROM alpine:3.4
+FROM alpine:3.6
 MAINTAINER Jim White <james_white2@dell.com>
 
 RUN apk --update add openjdk8-jre
