@@ -11,20 +11,28 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  *
- * @microservice: core-command
+ * @microservice: support-notifications
  * @author: Jim White, Dell
  * @version: 1.0.0
  *******************************************************************************/
 
-package org.edgexfoundry.controller;
+package org.edgexfoundry.suites;
 
-public interface PingController {
+import org.edgexfoundry.controller.integration.CommandControllerTest;
+/**
+ * Used in development only. Remove @Ignore to run just the integration tests (not unit tests).
+ * These tests do require other resources to run.
+ * 
+ * @author Jim White
+ *
+ */
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-  /**
-   * Test service providing an indication that the service is available.
-   * 
-   * @throws ServcieException (HTTP 503) for unknown or unanticipated issues
-   * @return - pong as a string
-   */
-  public String ping();
+@Ignore
+@RunWith(Suite.class)
+@Suite.SuiteClasses({CommandControllerTest.class})
+public class IntegrationTestSuite {
+
 }
