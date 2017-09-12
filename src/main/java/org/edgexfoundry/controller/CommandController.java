@@ -18,61 +18,15 @@
 
 package org.edgexfoundry.controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import org.edgexfoundry.domain.CommandResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
-import org.edgexfoundry.domain.CommandResponse;
-import org.edgexfoundry.domain.meta.AdminState;
-import org.edgexfoundry.domain.meta.Command;
-import org.edgexfoundry.domain.meta.Device;
-import org.edgexfoundry.domain.meta.DeviceService;
-import org.edgexfoundry.domain.meta.OperatingState;
-import org.edgexfoundry.domain.meta.Protocol;
-import org.edgexfoundry.exception.controller.ClientException;
-import org.edgexfoundry.exception.controller.LockedException;
-import org.edgexfoundry.exception.controller.NotFoundException;
-import org.edgexfoundry.exception.controller.ServiceException;
-
-@RestController
-@RequestMapping("/api/v1/device")
-
-public class CommandController {
-
-  private static final org.edgexfoundry.support.logging.client.EdgeXLogger logger =
-      org.edgexfoundry.support.logging.client.EdgeXLoggerFactory
-          .getEdgeXLogger(CommandController.class);
-
-  @Value("${device.service.protocol}")
-  private String protocol;
-
-  @Value("${meta.db.device.url}")
-  private String url;
-
-  @Autowired
-  DeviceClient deviceClient;
-
-  @Autowired
-  CommandClient commandClient;
-
-  // TODO - possibly cache some responses so they can be more quickly
-  // returned.
+public interface CommandController {
 
   /**
    * Retrieve a list of (all) devices and their command offerings. Throws ServiceException (HTTP
@@ -81,16 +35,7 @@ public class CommandController {
    * @param host - provided by the Spring runtime via the request header, the host address.
    * @return List of CommandResponse (containing the devices and their commands)
    */
-  @RequestMapping(method = RequestMethod.GET)
-  public List<CommandResponse> devices(@RequestHeader("host") String host) {
-    try {
-      return deviceClient.devices().stream().map(d -> new CommandResponse(d, host))
-          .collect(Collectors.toList());
-    } catch (Exception e) {
-      logger.error("Error getting command responses:  " + e.getMessage());
-      throw new ServiceException(e);
-    }
-  }
+  List<CommandResponse> devices(@RequestHeader("host") String host);
 
   /**
    * Retrieve a device (by database generated id) and its command offerings. Throws ServiceException
@@ -101,18 +46,7 @@ public class CommandController {
    * @param host - provided by the Spring runtime via the request header, the host address.
    * @return CommandResponse containing the device and its commands
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-  public CommandResponse device(@PathVariable String id, @RequestHeader("host") String host) {
-    try {
-      Device device = deviceClient.device(id);
-      return new CommandResponse(device, host);
-    } catch (javax.ws.rs.NotFoundException eNF) {
-      throw new NotFoundException(Device.class.toString(), id);
-    } catch (Exception e) {
-      logger.error("Error getting command response:  " + e.getMessage());
-      throw new ServiceException(e);
-    }
-  }
+  CommandResponse device(@PathVariable String id, @RequestHeader("host") String host);
 
   /**
    * Retrieve a device (by name) and its command offerings. Throws ServiceException (HTTP 503) for
@@ -123,19 +57,7 @@ public class CommandController {
    * @param host - provided by the Spring runtime via the request header, the host address.
    * @return CommandResponse containing the device and its commands
    */
-  @RequestMapping(value = "/name/{name:.+}", method = RequestMethod.GET)
-  public CommandResponse deviceByName(@PathVariable String name,
-      @RequestHeader("host") String host) {
-    try {
-      Device device = deviceClient.deviceForName(name);
-      return new CommandResponse(device, host);
-    } catch (javax.ws.rs.NotFoundException eNF) {
-      throw new NotFoundException(Device.class.toString(), name);
-    } catch (Exception e) {
-      logger.error("Error getting command response:  " + e.getMessage());
-      throw new ServiceException(e);
-    }
-  }
+  CommandResponse deviceByName(@PathVariable String name, @RequestHeader("host") String host);
 
   /**
    * Issue the put command referenced by the command id to the device/sensor (also referenced by
@@ -150,37 +72,8 @@ public class CommandController {
    * @param body - JSON data to send with the command request
    * @return String as returned by the device/sensor via the device service.
    */
-  @RequestMapping(value = "/{id}/command/{commandid}", method = RequestMethod.PUT)
-  public ResponseEntity<String> put(@PathVariable String id, @PathVariable String commandid,
-      @RequestBody String body) {
-    try {
-      Device device = deviceClient.device(id);
-      Command command = commandClient.command(commandid);
-      if (command == null) {
-        throw new NotFoundException(Command.class.toString(), commandid);
-      }
-      if (device.getAdminState() == AdminState.locked) {
-        logger.info("Request to device:  " + device.getName() + " blocked because it is locked");
-        throw new LockedException("Device " + device.getName() + " is in admin locked state");
-      }
-      if (device.getOperatingState() == OperatingState.disabled) {
-        logger
-            .info("Put request to device:  " + device.getName() + " blocked because it is disable");
-        throw new LockedException("Device " + device.getName() + " is in disabled op state");
-      }
-      String putURL = getUrl(device, id, command, false);
-      logger.info("Issuing put command to: " + putURL);
-      logger.info("Command message body is:  " + body);
-      return issueCommand(putURL, body, true);
-    } catch (javax.ws.rs.NotFoundException eNF) {
-      throw new NotFoundException(Device.class.toString(), id);
-    } catch (LockedException eL) {
-      throw eL;
-    } catch (Exception e) {
-      logger.error("Error calling put command:  " + e.getMessage());
-      throw new ServiceException(e);
-    }
-  }
+  ResponseEntity<String> put(@PathVariable String id, @PathVariable String commandid,
+      @RequestBody String body);
 
   /**
    * Issue the get command referenced by the command id to the device/sensor (also referenced by
@@ -194,30 +87,7 @@ public class CommandController {
    * @param host - provided by the Spring runtime via the request header, the host address.
    * @return String as returned by the device/sensor via the device service.
    */
-  @RequestMapping(value = "/{id}/command/{commandid}", method = RequestMethod.GET)
-  public ResponseEntity<String> get(@PathVariable String id, @PathVariable String commandid) {
-    try {
-      Device device = deviceClient.device(id);
-      Command command = commandClient.command(commandid);
-      if (command == null) {
-        throw new NotFoundException(Command.class.toString(), commandid);
-      }
-      if (device.getAdminState() == AdminState.locked) {
-        logger.info("Request to device:  " + device.getName() + " blocked because it is locked");
-        throw new LockedException("Device " + device.getName() + " is in admin locked state");
-      }
-      String getUrl = getUrl(device, id, command, true);
-      logger.info("Issuing get command to: " + getUrl);
-      return issueCommand(getUrl, null, false);
-    } catch (javax.ws.rs.NotFoundException eNF) {
-      throw new NotFoundException(Device.class.toString(), id);
-    } catch (LockedException eL) {
-      throw eL;
-    } catch (Exception e) {
-      logger.error("Error calling get command:  " + e.getMessage());
-      throw new ServiceException(e);
-    }
-  }
+  ResponseEntity<String> get(@PathVariable String id, @PathVariable String commandid);
 
   /**
    * Set the op state of the device (as referenced by the database generated id of the device) to
@@ -230,19 +100,7 @@ public class CommandController {
    * @param opState - either enabled or disabled as a String
    * @return - boolean indicating the successful
    */
-  @RequestMapping(value = "/{id}/opstate/{opState}", method = RequestMethod.PUT)
-  public boolean putOpState(@PathVariable String id, @PathVariable String opState) {
-    try {
-      deviceClient.updateOpState(id, opState);
-      logger.info("Requesting op state for device: " + id + " be set to " + opState);
-      return true;
-    } catch (javax.ws.rs.NotFoundException eNF) {
-      throw new NotFoundException(Device.class.toString(), id);
-    } catch (Exception e) {
-      logger.error("Error calling set of op state:  " + e.getMessage());
-      throw new ServiceException(e);
-    }
-  }
+  boolean putOpState(@PathVariable String id, @PathVariable String opState);
 
   /**
    * Set the op state of the device (by name of the device) to the state provided (either enabled or
@@ -254,19 +112,7 @@ public class CommandController {
    * @param opState - either enabled or disabled as a String
    * @return - boolean indicating the successful
    */
-  @RequestMapping(value = "/name/{name}/opstate/{opState}", method = RequestMethod.PUT)
-  public boolean putOpStateByName(@PathVariable String name, @PathVariable String opState) {
-    try {
-      deviceClient.updateOpStateByName(name, opState);
-      logger.info("Requesting op state for device: " + name + " be set to " + opState);
-      return true;
-    } catch (javax.ws.rs.NotFoundException eNF) {
-      throw new NotFoundException(Device.class.toString(), name);
-    } catch (Exception e) {
-      logger.error("Error calling set of op state:  " + e.getMessage());
-      throw new ServiceException(e);
-    }
-  }
+  boolean putOpStateByName(@PathVariable String name, @PathVariable String opState);
 
   /**
    * Set the admin state of the device (as referenced by the database generated id of the device) to
@@ -279,19 +125,7 @@ public class CommandController {
    * @param adminState - either locked or unlocked as a String
    * @return - boolean indicating the successful
    */
-  @RequestMapping(value = "/{id}/adminstate/{adminState}", method = RequestMethod.PUT)
-  public boolean putAdminState(@PathVariable String id, @PathVariable String adminState) {
-    try {
-      deviceClient.updateAdminState(id, adminState);
-      logger.info("Requesting admin state for device: " + id + " be set to " + adminState);
-      return true;
-    } catch (javax.ws.rs.NotFoundException eNF) {
-      throw new NotFoundException(Device.class.toString(), id);
-    } catch (Exception e) {
-      logger.error("Error calling set of admin state:  " + e.getMessage());
-      throw new ServiceException(e);
-    }
-  }
+  boolean putAdminState(@PathVariable String id, @PathVariable String adminState);
 
   /**
    * Set the admin state of the device (by name of the device) to the state provided (either locked
@@ -303,65 +137,6 @@ public class CommandController {
    * @param opState - either enabled or disabled as a String
    * @return - boolean indicating the successful
    */
-  @RequestMapping(value = "/name/{name}/adminstate/{adminState}", method = RequestMethod.PUT)
-  public boolean putAdminStateByName(@PathVariable String name, @PathVariable String adminState) {
-    try {
-      deviceClient.updateAdminStateByName(name, adminState);
-      logger.info("Requesting admin state for device: " + name + " be set to " + adminState);
-      return true;
-    } catch (javax.ws.rs.NotFoundException eNF) {
-      throw new NotFoundException(Device.class.toString(), name);
-    } catch (Exception e) {
-      logger.error("Error calling set of admin state:  " + e.getMessage());
-      throw new ServiceException(e);
-    }
-  }
-
-  private String getUrl(Device device, String deviceId, Command command, boolean isGet) {
-    DeviceService service = device.getService();
-    if (service != null && service.getAddressable() != null) {
-      // use REST for http services
-      if (Protocol.HTTP == service.getAddressable().getProtocol()) {
-        StringBuilder builder =
-            new StringBuilder(service.getAddressable().getProtocol().toString());
-        builder.append("://");
-        builder.append(service.getAddressable().getAddress());
-        builder.append(":");
-        builder.append(service.getAddressable().getPort());
-        if (isGet)
-          builder.append(command.getGet().getPath());
-        else
-          builder.append(command.getPut().getPath());
-        return builder.toString().replace("{deviceId}", deviceId);
-      } else {
-        // TODO - someday offer message send over bus (like 0MQ or MQTT
-        // for protocol = TCP
-        return "";
-      }
-    } else
-      throw new ClientException("Device Service is not properly addressable");
-  }
-
-  private ResponseEntity<String> issueCommand(String url, String body, boolean isPut)
-      throws IOException {
-    URL command = new URL(url);
-    HttpURLConnection con = (HttpURLConnection) command.openConnection();
-    if (isPut) {
-      con.setRequestMethod("PUT");
-      con.setDoOutput(true);
-      con.setRequestProperty("Content-Type", "application/json");
-      con.setRequestProperty("Content-Length", Integer.toString(body.length()));
-      OutputStream os = con.getOutputStream();
-      os.write(body.getBytes());
-    }
-    BufferedReader res = new BufferedReader(new InputStreamReader(con.getInputStream()));
-    StringBuilder response = new StringBuilder();
-    for (String responseLine = res.readLine(); responseLine != null; responseLine =
-        res.readLine()) {
-      response.append(responseLine);
-    }
-    res.close();
-    return new ResponseEntity<>(response.toString(), HttpStatus.OK);
-  }
+  boolean putAdminStateByName(@PathVariable String name, @PathVariable String adminState);
 
 }

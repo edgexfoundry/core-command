@@ -29,11 +29,12 @@ import org.edgexfoundry.domain.meta.Response;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class CommandResponseSerializer extends JsonSerializer<CommandResponse> {
+
+  private static final String JSON_DESC_FLD = "description";
 
   @Value("${url.protocol}")
   private String urlProtocol;
@@ -55,9 +56,9 @@ public class CommandResponseSerializer extends JsonSerializer<CommandResponse> {
     jgen.writeStringField("id", device.getId());
 
     if (device.getDescription() != null)
-      jgen.writeStringField("description", device.getDescription());
+      jgen.writeStringField(JSON_DESC_FLD, device.getDescription());
     else
-      jgen.writeNullField("description");
+      jgen.writeNullField(JSON_DESC_FLD);
     if (device.getLabels() != null) {
       jgen.writeArrayFieldStart("labels");
       for (String label : device.getLabels()) {
@@ -136,9 +137,9 @@ public class CommandResponseSerializer extends JsonSerializer<CommandResponse> {
     else
       jgen.writeNullField("code");
     if (resp.getDescription() != null)
-      jgen.writeStringField("description", resp.getDescription());
+      jgen.writeStringField(JSON_DESC_FLD, resp.getDescription());
     else
-      jgen.writeNullField("description");
+      jgen.writeNullField(JSON_DESC_FLD);
     if (resp.getExpectedValues() != null) {
       jgen.writeArrayFieldStart("expectedValues");
       for (String expected : resp.getExpectedValues()) {

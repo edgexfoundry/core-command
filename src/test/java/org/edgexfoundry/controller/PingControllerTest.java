@@ -11,20 +11,36 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  *
- * @microservice: core-command
+ * @microservice: core-data
  * @author: Jim White, Dell
  * @version: 1.0.0
  *******************************************************************************/
 
 package org.edgexfoundry.controller;
 
-public interface PingController {
+import static org.junit.Assert.assertEquals;
 
-  /**
-   * Test service providing an indication that the service is available.
-   * 
-   * @throws ServcieException (HTTP 503) for unknown or unanticipated issues
-   * @return - pong as a string
-   */
-  public String ping();
+import org.edgexfoundry.controller.impl.PingControllerImpl;
+import org.edgexfoundry.test.category.RequiresNone;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+@Category(RequiresNone.class)
+public class PingControllerTest {
+
+  private static final String PING_RESP = "pong";
+
+  private PingControllerImpl controller;
+
+  @Before
+  public void setup() {
+    controller = new PingControllerImpl();
+  }
+
+  @Test
+  public void testPing() {
+    assertEquals("Ping controller ping test responded incorrectly", PING_RESP, controller.ping());
+  }
+
 }

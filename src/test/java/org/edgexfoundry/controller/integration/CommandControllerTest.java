@@ -16,7 +16,7 @@
  * @version: 1.0.0
  *******************************************************************************/
 
-package org.edgexfoundry.controller.integration.web;
+package org.edgexfoundry.controller.integration;
 
 import static org.edgexfoundry.test.data.CommandResponseData.TEST_HOST;
 import static org.edgexfoundry.test.data.CommandResponseData.TEST_PARAMS;
@@ -34,12 +34,12 @@ import java.util.List;
 import org.edgexfoundry.Application;
 import org.edgexfoundry.controller.AddressableClient;
 import org.edgexfoundry.controller.CommandClient;
-import org.edgexfoundry.controller.CommandController;
 import org.edgexfoundry.controller.DeviceClient;
 import org.edgexfoundry.controller.DeviceProfileClient;
 import org.edgexfoundry.controller.DeviceServiceClient;
 import org.edgexfoundry.controller.impl.AddressableClientImpl;
 import org.edgexfoundry.controller.impl.CommandClientImpl;
+import org.edgexfoundry.controller.impl.CommandControllerImpl;
 import org.edgexfoundry.controller.impl.DeviceClientImpl;
 import org.edgexfoundry.controller.impl.DeviceProfileClientImpl;
 import org.edgexfoundry.controller.impl.DeviceServiceClientImpl;
@@ -94,7 +94,7 @@ public class CommandControllerTest {
   private static final String CMD_ENDPT = "http://localhost:48081/api/v1/command";
 
   @Autowired
-  private CommandController controller;
+  private CommandControllerImpl controller;
 
   private DeviceClient client;
   private DeviceServiceClient srvClient;
@@ -112,19 +112,19 @@ public class CommandControllerTest {
     addrClient = new AddressableClientImpl();
     cmdClient = new CommandClientImpl();
     setURL();
-    Addressable a = AddressableData.newTestInstance();
-    addrClient.add(a);
-    DeviceService s = ServiceData.newTestInstance();
-    s.setAddressable(a);
-    srvClient.add(s);
-    DeviceProfile p = ProfileData.newTestInstance();
+    Addressable address = AddressableData.newTestInstance();
+    addrClient.add(address);
+    DeviceService service = ServiceData.newTestInstance();
+    service.setAddressable(address);
+    srvClient.add(service);
+    DeviceProfile profile = ProfileData.newTestInstance();
     Command command = CommandData.newTestInstance();
-    p.addCommand(command);
-    pId = proClient.add(p);
+    profile.addCommand(command);
+    pId = proClient.add(profile);
     Device device = DeviceData.newTestInstance();
-    device.setAddressable(a);
-    device.setProfile(p);
-    device.setService(s);
+    device.setAddressable(address);
+    device.setProfile(profile);
+    device.setService(service);
     id = client.add(device);
     assertNotNull("Device did not get created correctly", id);
   }
@@ -156,15 +156,15 @@ public class CommandControllerTest {
   public void cleanup() throws Exception {
     resetClient();
     List<Device> devices = client.devices();
-    devices.forEach((d) -> client.delete(d.getId()));
-    List<DeviceProfile> ps = proClient.deviceProfiles();
-    ps.forEach((p) -> proClient.delete(p.getId()));
-    List<DeviceService> ds = srvClient.deviceServices();
-    ds.forEach((d) -> srvClient.delete(d.getId()));
-    List<Addressable> as = addrClient.addressables();
-    as.forEach((a) -> addrClient.delete(a.getId()));
+    devices.forEach((device) -> client.delete(device.getId()));
+    List<DeviceProfile> profiles = proClient.deviceProfiles();
+    profiles.forEach((profile) -> proClient.delete(profile.getId()));
+    List<DeviceService> devServices = srvClient.deviceServices();
+    devServices.forEach((service) -> srvClient.delete(service.getId()));
+    List<Addressable> addressables = addrClient.addressables();
+    addressables.forEach((addressable) -> addrClient.delete(addressable.getId()));
     List<Command> cmds = cmdClient.commands();
-    cmds.forEach((c) -> cmdClient.delete(c.getId()));
+    cmds.forEach((cmd) -> cmdClient.delete(cmd.getId()));
   }
 
   @Test
@@ -219,17 +219,17 @@ public class CommandControllerTest {
     server.createContext("/", new TestHandler());
     server.setExecutor(null);
     server.start();
-    DeviceProfile p = proClient.deviceProfile(pId);
+    DeviceProfile profile = proClient.deviceProfile(pId);
     assertEquals("get response not ok", HttpStatus.OK,
-        controller.get(id, p.getCommands().get(0).getId()).getStatusCode());
+        controller.get(id, profile.getCommands().get(0).getId()).getStatusCode());
     server.stop(0);
   }
 
   @Test(expected = ServiceException.class)
   public void testGetWithNoClient() throws Exception {
     unsetClient();
-    DeviceProfile p = proClient.deviceProfile(pId);
-    controller.get(id, p.getCommands().get(0).getId()).toString();
+    DeviceProfile profile = proClient.deviceProfile(pId);
+    controller.get(id, profile.getCommands().get(0).getId()).toString();
   }
 
   @Test(expected = NotFoundException.class)
@@ -243,17 +243,17 @@ public class CommandControllerTest {
     server.createContext("/", new TestHandler());
     server.setExecutor(null);
     server.start();
-    DeviceProfile p = proClient.deviceProfile(pId);
+    DeviceProfile profile = proClient.deviceProfile(pId);
     assertEquals("put response not ok", HttpStatus.OK,
-        controller.put(id, p.getCommands().get(0).getId(), TEST_PARAMS).getStatusCode());
+        controller.put(id, profile.getCommands().get(0).getId(), TEST_PARAMS).getStatusCode());
     server.stop(0);
   }
 
   @Test(expected = ServiceException.class)
   public void testPutWithNoClient() throws Exception {
     unsetClient();
-    DeviceProfile p = proClient.deviceProfile(pId);
-    controller.put(id, p.getCommands().get(0).getId(), TEST_PARAMS).toString();
+    DeviceProfile profile = proClient.deviceProfile(pId);
+    controller.put(id, profile.getCommands().get(0).getId(), TEST_PARAMS).toString();
   }
 
   @Test(expected = NotFoundException.class)

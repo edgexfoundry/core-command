@@ -29,7 +29,6 @@ import org.edgexfoundry.domain.meta.Addressable;
 import org.edgexfoundry.domain.meta.Command;
 import org.edgexfoundry.domain.meta.Device;
 import org.edgexfoundry.domain.meta.DeviceProfile;
-import org.edgexfoundry.domain.serializer.CommandResponseSerializer;
 import org.edgexfoundry.test.category.RequiresNone;
 import org.edgexfoundry.test.data.AddressableData;
 import org.edgexfoundry.test.data.CommandData;
@@ -71,13 +70,13 @@ public class CommandResponseSerializerTest {
 
   @Test
   public void testSerialize() throws IOException {
-    Addressable a = AddressableData.newTestInstance();
-    DeviceProfile p = ProfileData.newTestInstance();
+    Addressable addressable = AddressableData.newTestInstance();
+    DeviceProfile profile = ProfileData.newTestInstance();
     Command command = CommandData.newTestInstance();
-    p.addCommand(command);
+    profile.addCommand(command);
     Device device = DeviceData.newTestInstance();
-    device.setAddressable(a);
-    device.setProfile(p);
+    device.setAddressable(addressable);
+    device.setProfile(profile);
     CommandResponse resp = new CommandResponse(device, TEST_HOST);
     serializer.serialize(resp, jgen, provider);
     jgen.flush();
@@ -88,13 +87,13 @@ public class CommandResponseSerializerTest {
 
   @Test
   public void testProblematicNullFieldSerialization() throws IOException {
-    Addressable a = AddressableData.newTestInstance();
-    DeviceProfile p = ProfileData.newTestInstance();
+    Addressable addressable = AddressableData.newTestInstance();
+    DeviceProfile profile = ProfileData.newTestInstance();
     Command command = CommandData.newTestInstance();
-    p.addCommand(command);
+    profile.addCommand(command);
     Device device = DeviceData.newTestInstance();
-    device.setAddressable(a);
-    device.setProfile(p);
+    device.setAddressable(addressable);
+    device.setProfile(profile);
     CommandResponse resp = new CommandResponse(device, TEST_HOST);
     // labels should be empty
     device.setLabels(null);
