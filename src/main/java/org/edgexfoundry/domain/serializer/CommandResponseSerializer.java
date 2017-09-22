@@ -114,7 +114,7 @@ public class CommandResponseSerializer extends JsonSerializer<CommandResponse> {
     jgen.writeStringField("url",
         urlProtocol + host + urlDevicePath + deviceId + urlCmdPath + cmdId);
     if (action instanceof Put) {
-      jgen.writeArrayFieldStart("parameternames");
+      jgen.writeArrayFieldStart("parameterNames");
       for (String param : ((Put) action).getParameterNames()) {
         jgen.writeString(param);
       }
