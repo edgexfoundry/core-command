@@ -168,11 +168,11 @@ public class CommandControllerImpl implements CommandController {
       if (command == null) {
         throw new NotFoundException(Command.class.toString(), commandid);
       }
-      if (device.getAdminState() == AdminState.locked) {
+      if (device.getAdminState() == AdminState.LOCKED) {
         logger.info("Request to device:  " + device.getName() + " blocked because it is locked");
         throw new LockedException(ERR_DEVICE_MSG + device.getName() + " is in admin locked state");
       }
-      if (device.getOperatingState() == OperatingState.disabled) {
+      if (device.getOperatingState() == OperatingState.DISABLED) {
         logger
             .info("Put request to device:  " + device.getName() + " blocked because it is disable");
         throw new LockedException(ERR_DEVICE_MSG + device.getName() + " is in disabled op state");
@@ -214,7 +214,7 @@ public class CommandControllerImpl implements CommandController {
       if (command == null) {
         throw new NotFoundException(Command.class.toString(), commandid);
       }
-      if (device.getAdminState() == AdminState.locked) {
+      if (device.getAdminState() == AdminState.LOCKED) {
         logger.info("Request to device:  " + device.getName() + " blocked because it is locked");
         throw new LockedException(ERR_DEVICE_MSG + device.getName() + " is in admin locked state");
       }

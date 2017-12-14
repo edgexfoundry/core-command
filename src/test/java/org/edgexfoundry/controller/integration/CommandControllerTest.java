@@ -263,13 +263,13 @@ public class CommandControllerTest {
 
   @Test(expected = NotFoundException.class)
   public void testPutOpStateWithBadId() throws IOException {
-    controller.putOpState("badid", OperatingState.disabled.toString());
+    controller.putOpState("badid", OperatingState.DISABLED.toString());
   }
 
   @Test(expected = ServiceException.class)
   public void testPutOpStateWithNoClient() throws Exception {
     unsetClient();
-    controller.putOpState("badid", OperatingState.disabled.toString());
+    controller.putOpState("badid", OperatingState.DISABLED.toString());
   }
 
   @Test
@@ -279,7 +279,7 @@ public class CommandControllerTest {
     server.setExecutor(null);
     server.start();
     assertTrue("OpState change not accepted",
-        controller.putOpState(id, OperatingState.disabled.toString()));
+        controller.putOpState(id, OperatingState.DISABLED.toString()));
     server.stop(0);
   }
 
@@ -290,19 +290,19 @@ public class CommandControllerTest {
     server.setExecutor(null);
     server.start();
     assertTrue("OpState change by name not accepted",
-        controller.putOpStateByName(DeviceData.TEST_NAME, OperatingState.disabled.toString()));
+        controller.putOpStateByName(DeviceData.TEST_NAME, OperatingState.DISABLED.toString()));
     server.stop(0);
   }
 
   @Test(expected = NotFoundException.class)
   public void testPutOpStateByNameWithBadId() throws IOException {
-    controller.putOpStateByName("badname", OperatingState.disabled.toString());
+    controller.putOpStateByName("badname", OperatingState.DISABLED.toString());
   }
 
   @Test(expected = ServiceException.class)
   public void testPutOpStateByNameWithNoClient() throws Exception {
     unsetClient();
-    controller.putOpStateByName("badname", OperatingState.disabled.toString());
+    controller.putOpStateByName("badname", OperatingState.DISABLED.toString());
   }
 
   @Test
@@ -312,19 +312,19 @@ public class CommandControllerTest {
     server.setExecutor(null);
     server.start();
     assertTrue("Admin state change not accepted",
-        controller.putAdminState(id, AdminState.locked.toString()));
+        controller.putAdminState(id, AdminState.LOCKED.toString()));
     server.stop(0);
   }
 
   @Test(expected = NotFoundException.class)
   public void testPutAdminStateWithBadId() throws IOException {
-    controller.putAdminState("badid", AdminState.locked.toString());
+    controller.putAdminState("badid", AdminState.LOCKED.toString());
   }
 
   @Test(expected = ServiceException.class)
   public void testPutAdminStateWithNoClient() throws Exception {
     unsetClient();
-    controller.putAdminState("badid", AdminState.locked.toString());
+    controller.putAdminState("badid", AdminState.LOCKED.toString());
   }
 
   @Test
@@ -334,19 +334,19 @@ public class CommandControllerTest {
     server.setExecutor(null);
     server.start();
     assertTrue("Admin state change by name not accepted",
-        controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.locked.toString()));
+        controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.LOCKED.toString()));
     server.stop(0);
   }
 
   @Test(expected = NotFoundException.class)
   public void testPutAdminStateByNameWithBadId() throws IOException {
-    controller.putAdminStateByName("badname", AdminState.locked.toString());
+    controller.putAdminStateByName("badname", AdminState.LOCKED.toString());
   }
 
   @Test(expected = ServiceException.class)
   public void testPutAdminStateByNameWithNoClient() throws Exception {
     unsetClient();
-    controller.putAdminStateByName("badname", AdminState.locked.toString());
+    controller.putAdminStateByName("badname", AdminState.LOCKED.toString());
   }
 
   private void unsetClient() throws Exception {

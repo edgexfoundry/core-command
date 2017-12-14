@@ -163,7 +163,7 @@ public class CommandControllerTest {
 
   @Test(expected = LockedException.class)
   public void testPutDeviceLocked() {
-    device.setAdminState(AdminState.locked);
+    device.setAdminState(AdminState.LOCKED);
     DeviceService service = ServiceData.newTestInstance();
     service.setAddressable(AddressableData.newTestInstance());
     device.setService(service);
@@ -174,7 +174,7 @@ public class CommandControllerTest {
 
   @Test(expected = LockedException.class)
   public void testPutNotOperational() {
-    device.setOperatingState(OperatingState.disabled);
+    device.setOperatingState(OperatingState.DISABLED);
     DeviceService service = ServiceData.newTestInstance();
     service.setAddressable(AddressableData.newTestInstance());
     device.setService(service);
@@ -213,7 +213,7 @@ public class CommandControllerTest {
 
   @Test(expected = LockedException.class)
   public void testGetDeviceLocked() {
-    device.setAdminState(AdminState.locked);
+    device.setAdminState(AdminState.LOCKED);
     DeviceService service = ServiceData.newTestInstance();
     service.setAddressable(AddressableData.newTestInstance());
     device.setService(service);
@@ -289,10 +289,10 @@ public class CommandControllerTest {
     DeviceService service = ServiceData.newTestInstance();
     service.setAddressable(AddressableData.newTestInstance());
     device.setService(service);
-    when(deviceClient.updateAdminState(TEST_DEV_ID, AdminState.unlocked.toString()))
+    when(deviceClient.updateAdminState(TEST_DEV_ID, AdminState.UNLOCKED.toString()))
         .thenReturn(true);
     assertTrue("Update of device op state failed",
-        controller.putAdminState(TEST_DEV_ID, AdminState.unlocked.toString()));
+        controller.putAdminState(TEST_DEV_ID, AdminState.UNLOCKED.toString()));
   }
 
   @Test(expected = NotFoundException.class)
@@ -300,9 +300,9 @@ public class CommandControllerTest {
     DeviceService service = ServiceData.newTestInstance();
     service.setAddressable(AddressableData.newTestInstance());
     device.setService(service);
-    when(deviceClient.updateAdminState(TEST_DEV_ID, AdminState.unlocked.toString()))
+    when(deviceClient.updateAdminState(TEST_DEV_ID, AdminState.UNLOCKED.toString()))
         .thenThrow(new javax.ws.rs.NotFoundException(TEST_ERR_MSG));
-    controller.putAdminState(TEST_DEV_ID, AdminState.unlocked.toString());
+    controller.putAdminState(TEST_DEV_ID, AdminState.UNLOCKED.toString());
   }
 
   @Test(expected = ServiceException.class)
@@ -310,9 +310,9 @@ public class CommandControllerTest {
     DeviceService service = ServiceData.newTestInstance();
     service.setAddressable(AddressableData.newTestInstance());
     device.setService(service);
-    when(deviceClient.updateAdminState(TEST_DEV_ID, AdminState.unlocked.toString()))
+    when(deviceClient.updateAdminState(TEST_DEV_ID, AdminState.UNLOCKED.toString()))
         .thenThrow(new RuntimeException(TEST_ERR_MSG));
-    controller.putAdminState(TEST_DEV_ID, AdminState.unlocked.toString());
+    controller.putAdminState(TEST_DEV_ID, AdminState.UNLOCKED.toString());
   }
 
   @Test
@@ -320,10 +320,10 @@ public class CommandControllerTest {
     DeviceService service = ServiceData.newTestInstance();
     service.setAddressable(AddressableData.newTestInstance());
     device.setService(service);
-    when(deviceClient.updateAdminStateByName(DeviceData.TEST_NAME, AdminState.unlocked.toString()))
+    when(deviceClient.updateAdminStateByName(DeviceData.TEST_NAME, AdminState.UNLOCKED.toString()))
         .thenReturn(true);
     assertTrue("Update of device op state failed",
-        controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.unlocked.toString()));
+        controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.UNLOCKED.toString()));
   }
 
   @Test(expected = NotFoundException.class)
@@ -331,9 +331,9 @@ public class CommandControllerTest {
     DeviceService service = ServiceData.newTestInstance();
     service.setAddressable(AddressableData.newTestInstance());
     device.setService(service);
-    when(deviceClient.updateAdminStateByName(DeviceData.TEST_NAME, AdminState.unlocked.toString()))
+    when(deviceClient.updateAdminStateByName(DeviceData.TEST_NAME, AdminState.UNLOCKED.toString()))
         .thenThrow(new javax.ws.rs.NotFoundException(TEST_ERR_MSG));
-    controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.unlocked.toString());
+    controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.UNLOCKED.toString());
   }
 
   @Test(expected = ServiceException.class)
@@ -341,9 +341,9 @@ public class CommandControllerTest {
     DeviceService service = ServiceData.newTestInstance();
     service.setAddressable(AddressableData.newTestInstance());
     device.setService(service);
-    when(deviceClient.updateAdminStateByName(DeviceData.TEST_NAME, AdminState.unlocked.toString()))
+    when(deviceClient.updateAdminStateByName(DeviceData.TEST_NAME, AdminState.UNLOCKED.toString()))
         .thenThrow(new RuntimeException(TEST_ERR_MSG));
-    controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.unlocked.toString());
+    controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.UNLOCKED.toString());
   }
 
   @Test(expected = ServiceException.class) // can't make last call to the DS via issueCommand
