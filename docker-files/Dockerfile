@@ -20,10 +20,14 @@ FROM maven:3.3-jdk-8-alpine
 
 COPY docker-files/pom.xml .
 
-RUN mvn dependency:copy -q
+RUN mvn dependency:copy-dependencies -q
 
 FROM alpine:3.6
 MAINTAINER Jim White <james_white2@dell.com>
+# The main mirrors are giving us timeout issues on builds periodically.
+# So we can try these.
+RUN echo http://nl.alpinelinux.org/alpine/v3.6/main > /etc/apk/repositories; \
+    echo http://nl.alpinelinux.org/alpine/v3.6/community >> /etc/apk/repositories
 
 RUN apk --update add openjdk8-jre
 
