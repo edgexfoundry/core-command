@@ -242,15 +242,14 @@ public class CommandControllerImpl implements CommandController {
    * @param id - the database generated id for the device to receive the put command request
    * 
    * @param opState - either enabled or disabled as a String
-   * @return - boolean indicating the successful
+   * @return - 200 HTTP Status Code indicates success
    */
   @RequestMapping(value = "/{id}/opstate/{opState}", method = RequestMethod.PUT)
   @Override
-  public boolean putOpState(@PathVariable String id, @PathVariable String opState) {
+  public void putOpState(@PathVariable String id, @PathVariable String opState) {
     try {
       deviceClient.updateOpState(id, opState);
       logger.info("Requesting op state for device: " + id + LOG_SETMSG_STR + opState);
-      return true;
     } catch (javax.ws.rs.NotFoundException expNotFound) {
       throw new NotFoundException(Device.class.toString(), id);
     } catch (Exception e) {
@@ -267,15 +266,14 @@ public class CommandControllerImpl implements CommandController {
    * @param name - the name of the device
    * 
    * @param opState - either enabled or disabled as a String
-   * @return - boolean indicating the successful
+   * @return - 200 HTTP Status Code indicates success
    */
   @RequestMapping(value = "/name/{name}/opstate/{opState}", method = RequestMethod.PUT)
   @Override
-  public boolean putOpStateByName(@PathVariable String name, @PathVariable String opState) {
+  public void putOpStateByName(@PathVariable String name, @PathVariable String opState) {
     try {
       deviceClient.updateOpStateByName(name, opState);
       logger.info("Requesting op state for device: " + name + LOG_SETMSG_STR + opState);
-      return true;
     } catch (javax.ws.rs.NotFoundException expNotFound) {
       throw new NotFoundException(Device.class.toString(), name);
     } catch (Exception e) {
@@ -293,15 +291,14 @@ public class CommandControllerImpl implements CommandController {
    * @param id - the database generated id for the device to receive the put command request
    * 
    * @param adminState - either locked or unlocked as a String
-   * @return - boolean indicating the successful
+   * @return - 200 HTTP Status Code indicates success
    */
   @RequestMapping(value = "/{id}/adminstate/{adminState}", method = RequestMethod.PUT)
   @Override
-  public boolean putAdminState(@PathVariable String id, @PathVariable String adminState) {
+  public void putAdminState(@PathVariable String id, @PathVariable String adminState) {
     try {
       deviceClient.updateAdminState(id, adminState);
       logger.info("Requesting admin state for device: " + id + LOG_SETMSG_STR + adminState);
-      return true;
     } catch (javax.ws.rs.NotFoundException expNotFound) {
       throw new NotFoundException(Device.class.toString(), id);
     } catch (Exception e) {
@@ -318,15 +315,14 @@ public class CommandControllerImpl implements CommandController {
    * @param name - the name of the device
    * 
    * @param opState - either enabled or disabled as a String
-   * @return - boolean indicating the successful
+   * @return - 200 HTTP Status Code indicates success
    */
   @RequestMapping(value = "/name/{name}/adminstate/{adminState}", method = RequestMethod.PUT)
   @Override
-  public boolean putAdminStateByName(@PathVariable String name, @PathVariable String adminState) {
+  public void putAdminStateByName(@PathVariable String name, @PathVariable String adminState) {
     try {
       deviceClient.updateAdminStateByName(name, adminState);
       logger.info("Requesting admin state for device: " + name + LOG_SETMSG_STR + adminState);
-      return true;
     } catch (javax.ws.rs.NotFoundException expNotFound) {
       throw new NotFoundException(Device.class.toString(), name);
     } catch (Exception e) {

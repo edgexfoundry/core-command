@@ -68,7 +68,6 @@ public interface CommandController {
    * 
    * @param id - the database generated id for the device to receive the put command request
    * @param commandid - the id (database generated id) of the command to issue to the device
-   * @param host - provided by the Spring runtime via the request header, the host address.
    * @param body - JSON data to send with the command request
    * @return String as returned by the device/sensor via the device service.
    */
@@ -84,7 +83,6 @@ public interface CommandController {
    * 
    * @param id - the database generated id for the device to receive the put command request
    * @param commandid - the id (database generated id) of the command to issue to the device
-   * @param host - provided by the Spring runtime via the request header, the host address.
    * @return String as returned by the device/sensor via the device service.
    */
   ResponseEntity<String> get(@PathVariable String id, @PathVariable String commandid);
@@ -98,9 +96,9 @@ public interface CommandController {
    * @param id - the database generated id for the device to receive the put command request
    * 
    * @param opState - either enabled or disabled as a String
-   * @return - boolean indicating the successful
+   * @return - 200 HTTP Status Code indicates success
    */
-  boolean putOpState(@PathVariable String id, @PathVariable String opState);
+  void putOpState(@PathVariable String id, @PathVariable String opState);
 
   /**
    * Set the op state of the device (by name of the device) to the state provided (either enabled or
@@ -110,9 +108,9 @@ public interface CommandController {
    * @param name - the name of the device
    * 
    * @param opState - either enabled or disabled as a String
-   * @return - boolean indicating the successful
+   * @return - 200 HTTP Status Code indicates success
    */
-  boolean putOpStateByName(@PathVariable String name, @PathVariable String opState);
+  void putOpStateByName(@PathVariable String name, @PathVariable String opState);
 
   /**
    * Set the admin state of the device (as referenced by the database generated id of the device) to
@@ -123,9 +121,9 @@ public interface CommandController {
    * @param id - the database generated id for the device to receive the put command request
    * 
    * @param adminState - either locked or unlocked as a String
-   * @return - boolean indicating the successful
+   * @return - 200 HTTP Status Code indicates success
    */
-  boolean putAdminState(@PathVariable String id, @PathVariable String adminState);
+  void putAdminState(@PathVariable String id, @PathVariable String adminState);
 
   /**
    * Set the admin state of the device (by name of the device) to the state provided (either locked
@@ -134,9 +132,9 @@ public interface CommandController {
    * 
    * @param name - the name of the device
    * 
-   * @param opState - either enabled or disabled as a String
-   * @return - boolean indicating the successful
+   * @param adminState - either enabled or disabled as a String
+   * @return - 200 HTTP Status Code indicates success
    */
-  boolean putAdminStateByName(@PathVariable String name, @PathVariable String adminState);
+  void putAdminStateByName(@PathVariable String name, @PathVariable String adminState);
 
 }

@@ -278,8 +278,7 @@ public class CommandControllerTest {
     server.createContext("/", new TestHandler());
     server.setExecutor(null);
     server.start();
-    assertTrue("OpState change not accepted",
-        controller.putOpState(id, OperatingState.DISABLED.toString()));
+    controller.putOpState(id, OperatingState.DISABLED.toString());
     server.stop(0);
   }
 
@@ -289,8 +288,7 @@ public class CommandControllerTest {
     server.createContext("/", new TestHandler());
     server.setExecutor(null);
     server.start();
-    assertTrue("OpState change by name not accepted",
-        controller.putOpStateByName(DeviceData.TEST_NAME, OperatingState.DISABLED.toString()));
+    controller.putOpStateByName(DeviceData.TEST_NAME, OperatingState.DISABLED.toString());
     server.stop(0);
   }
 
@@ -311,8 +309,7 @@ public class CommandControllerTest {
     server.createContext("/", new TestHandler());
     server.setExecutor(null);
     server.start();
-    assertTrue("Admin state change not accepted",
-        controller.putAdminState(id, AdminState.LOCKED.toString()));
+    controller.putAdminState(id, AdminState.LOCKED.toString());
     server.stop(0);
   }
 
@@ -333,8 +330,7 @@ public class CommandControllerTest {
     server.createContext("/", new TestHandler());
     server.setExecutor(null);
     server.start();
-    assertTrue("Admin state change by name not accepted",
-        controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.LOCKED.toString()));
+    controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.LOCKED.toString());
     server.stop(0);
   }
 
