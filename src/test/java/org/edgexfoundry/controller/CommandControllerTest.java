@@ -229,8 +229,7 @@ public class CommandControllerTest {
     device.setService(service);
     when(deviceClient.updateOpState(TEST_DEV_ID, OperatingState.ENABLED.toString()))
         .thenReturn(true);
-    assertTrue("Update of device op state failed",
-        controller.putOpState(TEST_DEV_ID, OperatingState.ENABLED.toString()));
+    controller.putOpState(TEST_DEV_ID, OperatingState.ENABLED.toString());
   }
 
   @Test(expected = NotFoundException.class)
@@ -260,8 +259,7 @@ public class CommandControllerTest {
     device.setService(service);
     when(deviceClient.updateOpStateByName(DeviceData.TEST_NAME, OperatingState.ENABLED.toString()))
         .thenReturn(true);
-    assertTrue("Update of device op state failed",
-        controller.putOpStateByName(DeviceData.TEST_NAME, OperatingState.ENABLED.toString()));
+    controller.putOpStateByName(DeviceData.TEST_NAME, OperatingState.ENABLED.toString());
   }
 
   @Test(expected = NotFoundException.class)
@@ -291,8 +289,7 @@ public class CommandControllerTest {
     device.setService(service);
     when(deviceClient.updateAdminState(TEST_DEV_ID, AdminState.UNLOCKED.toString()))
         .thenReturn(true);
-    assertTrue("Update of device op state failed",
-        controller.putAdminState(TEST_DEV_ID, AdminState.UNLOCKED.toString()));
+    controller.putAdminState(TEST_DEV_ID, AdminState.UNLOCKED.toString());
   }
 
   @Test(expected = NotFoundException.class)
@@ -322,8 +319,7 @@ public class CommandControllerTest {
     device.setService(service);
     when(deviceClient.updateAdminStateByName(DeviceData.TEST_NAME, AdminState.UNLOCKED.toString()))
         .thenReturn(true);
-    assertTrue("Update of device op state failed",
-        controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.UNLOCKED.toString()));
+    controller.putAdminStateByName(DeviceData.TEST_NAME, AdminState.UNLOCKED.toString());
   }
 
   @Test(expected = NotFoundException.class)
